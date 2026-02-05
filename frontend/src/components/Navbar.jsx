@@ -18,14 +18,14 @@ export default function Navbar() {
 
         {/* Links */}
         <div className="nav-links">
+          <a href="/">Home</a>
           <a href="/signup">Sign Up</a>
           <a href="/planner">Plan a Route</a>
           <a href="/ratings">Rate a Route</a>
-          <a href="#">Team</a>
+          
         </div>
 
         {/* CTA */}
-        <button className="nav-cta">GET STARTED</button>
       </div>
     </nav>
   );
