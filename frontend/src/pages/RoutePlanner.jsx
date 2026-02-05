@@ -19,7 +19,10 @@ export default function SafeRoutePlanner() {
   const [toSuggestions, setToSuggestions] = useState([]);
   const [loadingTo, setLoadingTo] = useState(false);
 
-  /* ---------- AUTOCOMPLETE FETCH ---------- */
+  // SCHEDULE
+  const [scheduleDateTime, setScheduleDateTime] = useState("");
+
+  /* ---------- AUTOCOMPLETE ---------- */
   const fetchSuggestions = async (query, setList, setLoading) => {
     if (!query || query.length < 3) {
       setList([]);
@@ -48,7 +51,21 @@ export default function SafeRoutePlanner() {
     setLoading(false);
   };
 
-  /* ---------- GPS DETECTION ---------- */
+  /* ---------- DEPARTURE TIME ---------- */
+  const getDepartureTime = () => {
+    if (mode === "now") {
+      return new Date().toISOString();
+    }
+
+    if (!scheduleDateTime) {
+      alert("Please select date and time");
+      return null;
+    }
+
+    return new Date(scheduleDateTime).toISOString();
+  };
+
+  /* ---------- GPS ---------- */
   const detectCurrentLocation = () => {
     if (!navigator.geolocation) {
       alert("Geolocation not supported");
@@ -200,11 +217,44 @@ export default function SafeRoutePlanner() {
               </button>
             </div>
 
+            {/* ---------- SCHEDULE (CORRECT) ---------- */}
+            {mode === "schedule" && (
+              <div className="input-group">
+                <Clock className="icon teal" size={18} />
+                <input
+                  type="datetime-local"
+                  value={scheduleDateTime}
+                  onChange={(e) => setScheduleDateTime(e.target.value)}
+                />
+              </div>
+            )}
+
             {/* ---------- CTA ---------- */}
-            <button className="find-btn">
+            <button
+              className="find-btn"
+              onClick={() => {
+                if (!currentLocation || !destination) {
+                  alert("Please select start and destination");
+                  return;
+                }
+
+                const departureTime = getDepartureTime();
+                if (!departureTime) return;
+
+                const payload = {
+                  from: currentLocation,
+                  to: destination,
+                  mode,
+                  departureTime,
+                };
+
+                console.log("Route request:", payload);
+              }}
+            >
               <Search size={18} />
               Find Safe Routes
             </button>
+
           </div>
         </div>
 

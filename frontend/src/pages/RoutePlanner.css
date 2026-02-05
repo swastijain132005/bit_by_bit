@@ -47,7 +47,7 @@
   box-shadow: 0 0 0 3px rgba(43,180,166,0.1);
 }
 
-/* Icon */
+/* ================= ICONS ================= */
 .icon {
   flex-shrink: 0;
   transition: all 0.2s ease;
@@ -66,14 +66,24 @@
   transform: scale(1.1);
 }
 
-/* ================= INPUT + AUTOCOMPLETE ================= */
+.icon.loading {
+  opacity: 0.6;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ================= INPUTS ================= */
 .destination-wrapper {
   position: relative;
-  flex: 1;                 /* 🔑 full clickable width */
+  flex: 1;
   width: 100%;
 }
 
-.destination-wrapper input {
+.destination-wrapper input,
+.input-group > input {
   width: 100%;
   border: none;
   background: transparent;
@@ -82,11 +92,12 @@
   outline: none;
 }
 
-.destination-wrapper input::placeholder {
+.destination-wrapper input::placeholder,
+.input-group > input::placeholder {
   color: #94a3b8;
 }
 
-/* ================= SUGGESTIONS DROPDOWN ================= */
+/* ================= AUTOCOMPLETE ================= */
 .suggestions-box {
   position: absolute;
   top: calc(100% + 6px);
@@ -105,14 +116,12 @@
   padding: 10px 12px;
   cursor: pointer;
   font-size: 14px;
-  line-height: 1.4;
 }
 
 .suggestion-item:hover {
   background: #f1f5f9;
 }
 
-/* Loader */
 .loader {
   position: absolute;
   top: 100%;
@@ -122,7 +131,7 @@
   color: #64748b;
 }
 
-/* ================= TIME BUTTONS ================= */
+/* ================= TIME MODE ================= */
 .time-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -150,7 +159,7 @@
   box-shadow: 0 4px 12px rgba(43,180,166,0.3);
 }
 
-/* ================= CTA BUTTON ================= */
+/* ================= CTA ================= */
 .find-btn {
   padding: 14px 24px;
   border-radius: 12px;
@@ -184,16 +193,6 @@
   border: 2px dashed rgba(43,180,166,0.2);
   padding: 60px 40px;
   text-align: center;
-}
-
-/* ================= LOADING ICON ================= */
-.icon.loading {
-  opacity: 0.6;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
 }
 
 /* ================= RESPONSIVE ================= */
