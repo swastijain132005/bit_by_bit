@@ -2,9 +2,15 @@ import "./RoutePlanner.css";
 import Navbar from "../components/Navbar";
 import { MapPin, Navigation, Clock, Search } from "lucide-react";
 import { useState } from "react";
+import { fetchOSRMRoutes } from "../utils/osrm";
+import { createRankedRoutes } from "../utils/routeranking";
+
 
 export default function SafeRoutePlanner() {
   const [mode, setMode] = useState("now");
+  const [routes, setRoutes] = useState([]);
+const [loadingRoutes, setLoadingRoutes] = useState(false);
+
 
   // FROM
   const [fromText, setFromText] = useState("");
@@ -12,6 +18,7 @@ export default function SafeRoutePlanner() {
   const [fromSuggestions, setFromSuggestions] = useState([]);
   const [loadingFrom, setLoadingFrom] = useState(false);
   const [locLoading, setLocLoading] = useState(false);
+
 
   // TO
   const [toText, setToText] = useState("");
@@ -64,6 +71,35 @@ export default function SafeRoutePlanner() {
 
     return new Date(scheduleDateTime).toISOString();
   };
+
+
+  const handleFindRoutes = async () => {
+  setLoadingRoutes(true);
+
+  if (!currentLocation || !destination) {
+    alert("Please select start and destination");
+    setLoadingRoutes(false);
+    return;
+  }
+
+  try {
+    const osrmRoutes = await fetchOSRMRoutes(
+      currentLocation,
+      destination
+    );
+
+    console.log("OSRM Routes:", osrmRoutes);
+
+    const rankedRoutes = await createRankedRoutes(osrmRoutes);
+    setRoutes(rankedRoutes);
+
+  } catch (err) {
+    console.error(err);
+    alert("Failed to fetch routes");
+  }
+
+  setLoadingRoutes(false);
+};
 
   /* ---------- GPS ---------- */
   const detectCurrentLocation = () => {
@@ -229,46 +265,60 @@ export default function SafeRoutePlanner() {
               </div>
             )}
 
+            
+
             {/* ---------- CTA ---------- */}
-            <button
-              className="find-btn"
-              onClick={() => {
-                if (!currentLocation || !destination) {
-                  alert("Please select start and destination");
-                  return;
-                }
-
-                const departureTime = getDepartureTime();
-                if (!departureTime) return;
-
-                const payload = {
-                  from: currentLocation,
-                  to: destination,
-                  mode,
-                  departureTime,
-                };
-
-                console.log("Route request:", payload);
-              }}
-            >
-              <Search size={18} />
-              Find Safe Routes
-            </button>
+           <button
+  className="find-btn"
+  onClick={handleFindRoutes}
+  disabled={loadingRoutes}
+>
+  <Search size={18} />
+  {loadingRoutes ? "Finding routes..." : "Find Safe Routes"}
+</button>
 
           </div>
         </div>
+
 
         {/* RIGHT SIDE */}
-        <div className="planner-right">
-          <div className="routes-empty">
-            <div className="empty-icon">📍</div>
-            <h3>Routes will appear here</h3>
-            <p>
-              Enter start and destination to view the safest routes based on
-              real-time community insights.
-            </p>
-          </div>
+
+        
+       <div className="planner-right">
+  {loadingRoutes ? (
+    <div className="routes-empty">
+      <h3>Finding safest routes…</h3>
+    </div>
+  ) : routes.length === 0 ? (
+    <div className="routes-empty">
+      <div className="empty-icon">📍</div>
+      <h3>Routes will appear here</h3>
+      <p>
+        Enter start and destination to view the safest routes based on
+        community insights.
+      </p>
+    </div>
+  ) : (
+    routes.map((route) => (
+      <div key={route.id} className={`route-card ${route.color}`}>
+        <div className="route-header">
+          <h4>{route.label} Route</h4>
+          <span className="badge">{route.label}</span>
         </div>
+
+        <div className="route-metrics">
+          <p>🛡 Safety: ⭐ {route.safety.toFixed(1)}</p>
+          <p>⏱ Time: {(route.duration / 60).toFixed(0)} mins</p>
+          <p>📏 Distance: {(route.distance / 1000).toFixed(2)} km</p>
+        </div>
+
+        <button className="select-btn">Start Route</button>
+      </div>
+    ))
+  )}
+</div>
+
+
       </div>
     </>
   );

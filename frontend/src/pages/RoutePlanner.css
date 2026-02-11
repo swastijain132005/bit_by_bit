@@ -216,3 +216,55 @@
     width: 100%;
   }
 }
+
+.route-card {
+  background: white;
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  border-left: 6px solid transparent;
+  transition: transform 0.2s;
+}
+
+.route-card:hover {
+  transform: translateY(-3px);
+}
+
+.route-card.green { border-color: #16a34a; }
+.route-card.blue  { border-color: #2563eb; }
+.route-card.orange{ border-color: #ea580c; }
+
+.route-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.badge {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.06);
+}
+
+.route-metrics {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #334155;
+}
+
+.select-btn {
+  margin-top: 14px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  background: #0f766e;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.select-btn:hover {
+  background: #115e59;
+}
